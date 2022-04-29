@@ -9,6 +9,11 @@ const routes = [
         name: 'Home',
         component: () => import( '../views/Home.vue')
     },
+    {
+        path: '/answer',
+        name: 'Answer',
+        component: () => import( '../views/Answer.vue')
+    },
 ]
 
 const router = new VueRouter({

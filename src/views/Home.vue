@@ -21,7 +21,7 @@
                 :key="subject.label"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="考试科目">
+        <el-form-item label="题目数量">
           <el-input v-model="formItemBank.pageSize" placeholder="请选择题目数量"></el-input>
         </el-form-item>
         <el-form-item label-width="0">
@@ -53,7 +53,7 @@ export default {
       formItemBank: {
         licenseType: 0,
         subjectType: 0,
-        pageSize: 50
+        pageSize: 20
       },
       typeOption,
       subjectOption
@@ -67,6 +67,8 @@ export default {
         ...this.formItemBank
       })
       console.log(res);
+      this.$store.commit('saveAnswerData', res)
+      await this.$router.push("/answer")
     }
   }
 }
