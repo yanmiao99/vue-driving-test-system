@@ -1,22 +1,40 @@
 <template>
   <div class="answer">
-    <el-page-header @back="goBack" content="重新选题" style="margin: 50px 0"/>
-    <answerItem
-        v-for="(item,index) in answerData.driverQuestionList"
-        :key="item.questionID"
-        :title="item.question"
-        :img-url="item.imageURL"
-        :answer-list="[item.optionA,item.optionB,item.optionC,item.optionD,]"
-        :dot="index + 1"
-        :questionType="item.questionType"
-        :explains="item.explains"
-        :answer-key="item.key"
-        :isShowExplains="item.show"
-        :alert="item.alert"
-        :disabled="item.disabled"
-    />
+    <div class="answer-fixed">
+      <el-page-header @back="goBack" content="重新选题" style="margin: 50px 0"/>
+      <el-progress
+          :text-inside="true"
+          :stroke-width="20"
+          :percentage="100"
+          class="progress"
+          :format="formatProgress"/>
+    </div>
+    <div class="answer-wrapper">
+      <answerItem
+          v-for="(item,index) in answerData.driverQuestionList"
+          :key="item.questionID"
+          :title="item.question"
+          :img-url="item.imageURL"
+          :answer-list="[item.optionA,item.optionB,item.optionC,item.optionD]"
+          :dot="index + 1"
+          :questionType="item.questionType"
+          :explains="item.explains"
+          :answer-key="item.key"
+          :isShowExplains="item.show"
+          :alert="item.alert"
+          :disabled="item.disabled"
+      />
+    </div>
     <div class="submit">
-      <el-button type="success" @click="handleSubmit">提交答案</el-button>
+      <el-button
+          type="success"
+          @click="handleSubmit">
+        提交答案
+      </el-button>
+    </div>
+    <!-- 返回顶部 -->
+    <div class="backTop" v-show="scrollTop > 300">
+      <el-button type="primary" icon="el-icon-arrow-up" circle @click="handleBackTop"></el-button>
     </div>
   </div>
 </template>
@@ -31,11 +49,14 @@ export default {
   },
   data() {
     return {
-      answerData: this.$store.state.answerData
+      answerData: this.$store.state.answerData,
+      scrollTop: 0
     }
   },
   mounted() {
-    // console.log(this.answerData);
+    window.onscroll = () => {
+      this.scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+    }
   },
   methods: {
     goBack() {
@@ -86,13 +107,26 @@ export default {
           cancelButtonText: '返回首页',
           distinguishCancelAndClose: true,
         }).then(() => {
-
+          // 点击确定的回调
+          const goToTop = () => window.scrollTo(0, 0);
+          goToTop();
         }).catch(action => {
+          // 点击返回首页的回调
           this.$router.push("/")
         });
       } else {
         this.$message.error('请完成考卷再提交')
       }
+    },
+    handleBackTop() {
+      let c = this.scrollTop
+      if (c > 0) {
+        window.requestAnimationFrame(this.handleBackTop);
+        window.scrollTo(0, c - c / 8);
+      }
+    },
+    formatProgress(val){
+      return '目前题目完成进度 ' + val + ' %'
     }
   }
 }
@@ -100,8 +134,38 @@ export default {
 
 <style scoped lang="scss">
 .answer {
+  position: relative;
+
+  .answer-fixed {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1050px;
+    text-align: left;
+    z-index: 20;
+    background: #fff;
+    border-bottom: 1px solid #ccc;
+    .progress{
+      margin: 0 50px 30px 0;
+    }
+    box-sizing: border-box;
+  }
+  .answer-wrapper{
+    margin-top: 200px;
+
+  }
+
   .submit {
+    display: flex;
+    justify-content: right;
     margin: 50px 0;
+  }
+
+  .backTop {
+    position: fixed;
+    bottom: 100px;
+    right: 50px;
   }
 }
 </style>

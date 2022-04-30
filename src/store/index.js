@@ -16,7 +16,7 @@ export default new Vuex.Store({
         },
         saveAnswerList(state, res) {
             let {index, data} = res
-            state.answerList[index - 1] = data.split('').sort().join('') // 排序
+            state.answerList[index - 1] = data.split('').sort().join('') // 排序 ( 把字符串转成数组, 排序后再转回字符串)
             console.log(state.answerList);
             storage.setItem('answerList', state.answerList)
         },

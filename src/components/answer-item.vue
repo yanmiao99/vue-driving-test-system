@@ -9,15 +9,18 @@
         <div class="item-img" v-if="imgUrl">
           <img :src="imgUrl" alt="">
         </div>
+        <!-- 多选题 -->
         <div class="btn-group" v-if="questionType === '3'">
           <el-checkbox-group
               v-model="answerCheckBoxList"
-              v-for="(item,index) in answerList"
+              v-for="(item,index) in formatAnswerList"
               :key="index"
               class="btn-item">
             <el-checkbox
                 @change="(val)=>handleCheckBoxChange(val,index)"
-                :label="item"
+                :label="item.label"
+                :name="item.label"
+                :checked="item.checked"
                 border
                 :disabled="disabled"
                 size="medium"
@@ -25,6 +28,7 @@
             />
           </el-checkbox-group>
         </div>
+        <!-- 单选题 -->
         <div class="btn-group" v-else>
           <el-radio-group
               @change="handleRadioChange"
@@ -62,38 +66,39 @@
 export default {
   name: "answer-item",
   props: {
-    title: {
+    title: {  // 标题
       type: String,
     },
-    dot: {
+    dot: {   // 标记点
       type: Number,
     },
-    imgUrl: {
+    imgUrl: {  // 图片url
       type: String,
     },
-    answerList: {
+    answerList: {  // 数据列表
       type: Array
     },
-    questionType: {
+    questionType: {  // 数据类型 1,2 单选题 , 3 多选题
       type: String
     },
-    explains: {
+    explains: { // 正确的解释
       type: String,
     },
-    answerKey: {
+    answerKey: { // 正确的答案
       type: String
     },
-    isShowExplains: {
+    isShowExplains: { // 是否显示解释
       type: Boolean
     },
-    alert: {
+    alert: { // 显示的解释里面的内容
       type: Boolean
     },
-    disabled:{
-      type:Boolean
+    disabled: { // 是否全部禁用
+      type: Boolean
     }
   },
   data() {
+    // 定义字典对应 1,2,3,4 的转换关系
     let obj = {
       1: () => 'A',
       2: () => 'B',
@@ -101,10 +106,24 @@ export default {
       4: () => 'D',
     }
     return {
-      answerRadio: '',
-      answerCheckBoxList: [],
+      answerRadio: '',  // radio ,单选题选中后的 value
+      answerCheckBoxList: [], // checkbox , 多选题选中后的 value
       obj,
-      checkBoxStr: '',
+      checkBoxStr: '', // 用于多选题分割
+    }
+  },
+  computed: {
+    // 格式化数据, 用于给 checkbox 使用
+    formatAnswerList() {
+      let newData = []
+      this.answerList.forEach((item, index) => {
+        newData.push({
+          value: index + 1,
+          label: item,
+          checked: false
+        })
+      })
+      return newData
     }
   },
   methods: {
@@ -114,9 +133,16 @@ export default {
     },
     handleCheckBoxChange(val, index) {
       let res = this.obj[Number(index + 1)]()
-      this.checkBoxStr += res
+
+      // 选中则继续 添加 , 取消则替换
+      if (val) {
+        this.checkBoxStr += res
+      } else {
+        this.checkBoxStr = this.checkBoxStr.replace(res, '')
+      }
+      // 字符串去重 , 防止多次勾选造成的数据错误
       this.checkBoxStr = [...new Set(this.checkBoxStr)].join('');
-      // console.log(this.checkBoxStr);
+      // // console.log(this.checkBoxStr);
       this.$store.commit('saveAnswerList', {index: this.dot, data: this.checkBoxStr})
     },
   }
