@@ -1,13 +1,7 @@
 <template>
   <div class="answer">
     <div class="answer-fixed">
-      <el-page-header @back="goBack" content="重新选题" style="margin: 50px 0"/>
-      <el-progress
-          :text-inside="true"
-          :stroke-width="20"
-          :percentage="100"
-          class="progress"
-          :format="formatProgress"/>
+      <el-page-header @back="goBack" content="重新选题" class="page-header"/>
     </div>
     <div class="answer-wrapper">
       <answerItem
@@ -59,9 +53,11 @@ export default {
     }
   },
   methods: {
+    // 点击返回首页
     goBack() {
       this.$router.push("/")
     },
+    // 提交考卷
     handleSubmit() {
       // 1. 判断答案是否全部勾选
       if (this.$store.state.answerList.length === this.answerData.driverQuestionList.length) {
@@ -118,6 +114,7 @@ export default {
         this.$message.error('请完成考卷再提交')
       }
     },
+    // 点击返回顶部
     handleBackTop() {
       let c = this.scrollTop
       if (c > 0) {
@@ -125,9 +122,6 @@ export default {
         window.scrollTo(0, c - c / 8);
       }
     },
-    formatProgress(val){
-      return '目前题目完成进度 ' + val + ' %'
-    }
   }
 }
 </script>
@@ -146,13 +140,15 @@ export default {
     z-index: 20;
     background: #fff;
     border-bottom: 1px solid #ccc;
-    .progress{
-      margin: 0 50px 30px 0;
-    }
     box-sizing: border-box;
+
+    .page-header {
+      margin: 30px 0;
+    }
   }
-  .answer-wrapper{
-    margin-top: 200px;
+
+  .answer-wrapper {
+    margin-top: 130px;
 
   }
 

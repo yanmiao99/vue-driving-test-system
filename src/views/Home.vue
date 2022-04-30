@@ -53,7 +53,7 @@ export default {
       formItemBank: {
         licenseType: 0,
         subjectType: 0,
-        pageSize: 20
+        pageSize: 10
       },
       typeOption,
       subjectOption
@@ -64,10 +64,15 @@ export default {
   methods: {
     async handleSubmit() {
       let res = await this.$api.post("/queryQuestionList", {
-        ...this.formItemBank
+        ...this.formItemBank,
+        page: Math.floor(Math.random() * 10) + 1, // 生成 1-10 页码中的随机一个页面的数据
       })
-      console.log(res);
+      // console.log(res);
+      // 存储考题
       this.$store.commit('saveAnswerData', res)
+      // 清空上次的所有答案
+      this.$store.commit('resetAnswerList')
+      // 跳转路由
       await this.$router.push("/answer")
     }
   }

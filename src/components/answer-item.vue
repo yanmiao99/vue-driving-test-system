@@ -14,7 +14,7 @@
           <el-checkbox-group
               v-model="answerCheckBoxList"
               v-for="(item,index) in formatAnswerList"
-              :key="index"
+              :key="item.label"
               class="btn-item">
             <el-checkbox
                 @change="(val)=>handleCheckBoxChange(val,index)"
@@ -34,7 +34,7 @@
               @change="handleRadioChange"
               v-model="answerRadio"
               v-for="(item,index) in answerList"
-              :key="index"
+              :key="item"
               class="btn-item">
             <el-radio
                 border
