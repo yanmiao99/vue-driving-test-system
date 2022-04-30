@@ -51,7 +51,7 @@
       <div class="explains" v-if="isShowExplains">
         <el-divider></el-divider>
         <el-alert
-            :title="alert ? '正确' : `错误, 正确答案是 ${answerKey}`"
+            :title="alert ? `正确` : `错误`"
             :type="alert ?'success' : 'error'"
             show-icon
             :closable="false"
@@ -124,7 +124,7 @@ export default {
         })
       })
       return newData
-    }
+    },
   },
   methods: {
     handleRadioChange(val) {

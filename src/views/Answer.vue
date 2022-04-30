@@ -1,8 +1,10 @@
 <template>
   <div class="answer">
+    <!-- 头部 -->
     <div class="answer-fixed">
       <el-page-header @back="goBack" content="重新选题" class="page-header"/>
     </div>
+    <!-- 中间 -->
     <div class="answer-wrapper">
       <answerItem
           v-for="(item,index) in answerData.driverQuestionList"
@@ -19,6 +21,7 @@
           :disabled="item.disabled"
       />
     </div>
+    <!-- 尾部 -->
     <div class="submit">
       <el-button
           type="success"
@@ -63,9 +66,9 @@ export default {
       if (this.$store.state.answerList.length === this.answerData.driverQuestionList.length) {
         // 2. 判断答案是否正确
 
-        this.$store.state.answerList.forEach(item => {
+        this.$store.state.answerList.forEach((item) => {
           this.answerData.driverQuestionList.forEach(el => {
-            el.alert = item === el.key;
+            el.alert = item.toString() === el.key.toString();
             el.show = true
             el.disabled = true
             this.$forceUpdate()
@@ -75,6 +78,7 @@ export default {
         let correct = 0 // 正确
         let error = 0   // 错误
         let correctRate = 0  // 正确率
+        let score = 0 // 得分
 
 
         this.answerData.driverQuestionList.forEach(el => {
@@ -88,14 +92,20 @@ export default {
         // 正确率
         correctRate = correct / this.answerData.driverQuestionList.length * 100
 
+        if (this.answerData.driverQuestionList.length === 50) {
+          score = correct * 2
+        } else if (this.answerData.driverQuestionList.length === 100) {
+          score = correct
+        }
 
         // 3. 弹窗成绩
         let vNodeDiv = `
             <div>
                 <p>✅ 正确了 : <span> ${correct} </span>道题</p>
                 <p>❌ 错误了 : <span> ${error} </span>道题</p>
-                <p> 正确率为 : <span>${correctRate}</span> % </p>
-            </div>
+                <p>正确率为 : <span>${correctRate}</span> % </p>
+                <p>得分 : <span>${score}</span> 分</p>
+            </p>
         `
         this.$confirm(vNodeDiv, '成绩', {
           confirmButtonText: '确定',

@@ -22,7 +22,13 @@
           </el-select>
         </el-form-item>
         <el-form-item label="题目数量">
-          <el-input v-model="formItemBank.pageSize" placeholder="请选择题目数量"></el-input>
+          <el-input-number
+              v-model="formItemBank.pageSize"
+              placeholder="请选择题目数量"
+              :min="50"
+              :step="50"
+              :max="100"
+              label="请选择题目数量"/>
         </el-form-item>
         <el-form-item label-width="0">
           <el-button type="primary" @click="handleSubmit" style="width: 100%">开始考试</el-button>
@@ -53,7 +59,7 @@ export default {
       formItemBank: {
         licenseType: 0,
         subjectType: 0,
-        pageSize: 10
+        pageSize: 50
       },
       typeOption,
       subjectOption
@@ -65,9 +71,16 @@ export default {
     async handleSubmit() {
       let res = await this.$api.post("/queryQuestionList", {
         ...this.formItemBank,
-        page: Math.floor(Math.random() * 10) + 1, // 生成 1-10 页码中的随机一个页面的数据
+        // page: Math.floor(Math.random() * 10) + 1, // 生成 1-10 页码中的随机一个页面的数据
       })
-      // console.log(res);
+      res.driverQuestionList.forEach(item => {
+        if (item.key === '正确') {
+          item.key = 'A'
+        } else if (item.key === '错误') {
+          item.key = 'B'
+        }
+      })
+
       // 存储考题
       this.$store.commit('saveAnswerData', res)
       // 清空上次的所有答案
